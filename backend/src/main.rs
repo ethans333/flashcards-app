@@ -5,7 +5,7 @@ mod routes;
 
 #[tokio::main]
 async fn main() {
-    if std::env::var("LAMBDA_RUNTIME").is_ok() {
+    if std::env::var("LAMBDA_TASK_ROOT").is_ok() {
         lambda::run_lambda().await;
     } else {
         local::run_local().await;
