@@ -13,6 +13,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: 🤑 Cache Cargo registry
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: 🤑 Cache Cargo Lambda
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/bin/cargo-lambda
+          key: cargo-lambda
+
+      - name: Install Zig
+        run: |
+          curl -LO https://ziglang.org/download/0.11.0/zig-linux-x86_64-0.11.0.tar.xz
+          tar -xf zig-linux-x86_64-0.11.0.tar.xz
+          sudo mv zig-linux-x86_64-0.11.0/zig /usr/local/bin/
+          zig version
+
       - name: 📦 Package Lambda Function
         run: |
           cargo install cargo-lambda
