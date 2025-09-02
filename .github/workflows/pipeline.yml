@@ -13,26 +13,34 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: 🤑 Cache Cargo registry
+      - name: 🤑 Cache Cargo registry & build
         uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-          key: cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+            target
+          key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            cargo-${{ runner.os }}-
 
-      - name: 🤑 Cache Cargo Lambda
+      - name: 🤑 Cache Cargo Lambda binary
         uses: actions/cache@v3
         with:
           path: ~/.cargo/bin/cargo-lambda
-          key: cargo-lambda
+          key: cargo-lambda-v1
 
       - name: ⚡ Install Zig
         uses: mlugg/setup-zig@v2
 
+      - name: 📦 Install cargo-lambda if missing
+        run: |
+          if ! command -v cargo-lambda &> /dev/null; then
+            cargo install cargo-lambda
+          fi
+
       - name: 📦 Package Lambda Function
         run: |
-          cargo install cargo-lambda
           cargo lambda build --release --arm64 --output-format zip
         working-directory: backend
 
