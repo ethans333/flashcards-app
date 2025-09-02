@@ -13,22 +13,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: 🤑 Cache Cargo registry & build
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            cargo-${{ runner.os }}-
+      - name: 🦀 Install Rust
+        run: rustup toolchain install stable --profile minimal
 
-      - name: 🤑 Cache Cargo Lambda binary
-        uses: actions/cache@v3
+      - name: 🤑 Cache Cargo
+        uses: Swatinem/rust-cache@v2
         with:
-          path: ~/.cargo/bin/cargo-lambda
-          key: cargo-lambda-v1
+          workspaces: |
+            backend -> target
 
       - name: ⚡ Install Zig
         uses: mlugg/setup-zig@v2
@@ -55,9 +47,14 @@ jobs:
         run: |
           aws s3 cp backend/target/lambda/backend/bootstrap.zip s3://flashcards-bootstrap-bin/bootstrap.zip
 
+      - name: 🔧 Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.3
+
       - name: 🏗️ Terraform Apply
         run: |
           terraform init
           terraform plan -out=tfplan
-            terraform apply -auto-approve tfplan
+          terraform apply -auto-approve tfplan
         working-directory: terraform
