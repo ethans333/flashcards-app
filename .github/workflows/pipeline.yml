@@ -27,12 +27,8 @@ jobs:
           path: ~/.cargo/bin/cargo-lambda
           key: cargo-lambda
 
-      - name: Install Zig
-        run: |
-          curl -LO https://ziglang.org/download/0.11.0/zig-linux-x86_64-0.11.0.tar.xz
-          tar -xf zig-linux-x86_64-0.11.0.tar.xz
-          sudo mv zig-linux-x86_64-0.11.0/zig /usr/local/bin/
-          zig version
+      - name: ⚡ Install Zig
+        uses: mlugg/setup-zig@v2
 
       - name: 📦 Package Lambda Function
         run: |
