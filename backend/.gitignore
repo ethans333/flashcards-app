@@ -1,0 +1,22 @@
+# Rust build artifacts
+target/
+
+# Cargo.lock for executables (optional, keep for libraries)
+# Cargo.lock
+
+# Operating system generated files
+.DS_Store # macOS
+Thumbs.db # Windows
+ehthumbs.db # Windows
+Desktop.ini # Windows
+
+# IDE/Editor specific files (example for VS Code)
+.vscode/
+.idea/ # IntelliJ Rust
+*.sublime-project
+*.sublime-workspace
+
+# Backup/temporary files
+*.rs.bk
+*.swp
+*~
