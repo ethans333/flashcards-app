@@ -1,0 +1,36 @@
+name: API Upload
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: 📦 Package Lambda Function
+        run: cargo lambda build --release --arm64 --output-format zip
+        working-directory: backend
+
+      - name: 🔑 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: 🪣 Update Lambda Code
+        run: |
+          aws s3 cp backend/target/lambda/my_crate/bootstrap.zip s3://flashcards-bootstrap-bin/bootstrap.zip
+
+      - name: 🏗️ Terraform Apply
+        run: |
+          terraform init
+          terraform plan -out=tfplan
+            terraform apply -auto-approve tfplan
+        working-directory: terraform
