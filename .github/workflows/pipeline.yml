@@ -45,7 +45,7 @@ jobs:
 
       - name: 🪣 Update Lambda Code
         run: |
-          aws s3 cp backend/target/lambda/my_crate/bootstrap.zip s3://flashcards-bootstrap-bin/bootstrap.zip
+          aws s3 cp backend/target/lambda/backend/bootstrap.zip s3://flashcards-bootstrap-bin/bootstrap.zip
 
       - name: 🏗️ Terraform Apply
         run: |
