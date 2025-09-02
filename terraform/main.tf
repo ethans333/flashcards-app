@@ -38,8 +38,10 @@ resource "aws_lambda_function" "rust_api" {
   handler       = "bootstrap"
   architectures = ["arm64"]
 
-  s3_bucket = "flashcards-bootstrap-bin"
-  s3_key    = "bootstrap.zip"
+  s3_bucket        = "flashcards-bootstrap-bin"
+  s3_key           = "bootstrap.zip"
+  source_code_hash = filebase64sha256("${path.module}/../backend/target/lambda/backend/bootstrap.zip")
+
 }
 
 resource "aws_apigatewayv2_api" "http_api" {
